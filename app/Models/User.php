@@ -38,10 +38,21 @@ public function notifikasi()
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'nama',
         'email',
         'password',
+        'peran',     // peran user: 'admin' atau 'user'
     ];
+
+    public function getNameAttribute(): ?string
+    {
+        return $this->attributes['nama'] ?? null;
+    }
+
+    public function setNameAttribute(?string $value): void
+    {
+        $this->attributes['nama'] = $value;
+    }
 
     /**
      * The attributes that should be hidden for serialization.

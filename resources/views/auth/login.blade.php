@@ -1,47 +1,96 @@
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+
+    <h2>{{ __('login_title') }}</h2>
+    <p class="auth-subtitle">{{ __('login_subtitle') }}</p>
+
+    {{-- Session Status --}}
+    @if (session('status'))
+        <div class="auth-status">
+            {{ session('status') }}
+        </div>
+    @endif
+
+    {{-- Language Switcher di halaman login --}}
+    <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+        <a href="{{ route('language.switch', 'id') }}"
+           style="display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.3rem 0.7rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500; text-decoration: none; transition: all 0.2s;
+           {{ app()->getLocale() === 'id' ? 'background: #1b2a4a; color: #fff;' : 'background: #f1f3f6; color: #6b7385; border: 1px solid #e2e6ed;' }}">
+            🇮🇩 Indonesia
+        </a>
+        <a href="{{ route('language.switch', 'en') }}"
+           style="display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.3rem 0.7rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500; text-decoration: none; transition: all 0.2s;
+           {{ app()->getLocale() === 'en' ? 'background: #1b2a4a; color: #fff;' : 'background: #f1f3f6; color: #6b7385; border: 1px solid #e2e6ed;' }}">
+            🇬🇧 English
+        </a>
+    </div>
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        {{-- Email --}}
+        <div class="form-group">
+            <label for="email">{{ __('email') }}</label>
+            <div class="input-wrapper">
+                <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    value="{{ old('email') }}"
+                    placeholder="{{ __('email_placeholder') }}"
+                    required
+                    autofocus
+                    autocomplete="username"
+                >
+                <i class="bi bi-envelope input-icon"></i>
+            </div>
+            @error('email')
+                <p class="input-error">{{ $message }}</p>
+            @enderror
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        {{-- Password --}}
+        <div class="form-group">
+            <label for="password">{{ __('password') }}</label>
+            <div class="input-wrapper">
+                <input
+                    id="password"
+                    type="password"
+                    name="password"
+                    placeholder="{{ __('password_placeholder') }}"
+                    required
+                    autocomplete="current-password"
+                >
+                <i class="bi bi-lock input-icon"></i>
+            </div>
+            @error('password')
+                <p class="input-error">{{ $message }}</p>
+            @enderror
         </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
+        {{-- Remember Me --}}
+        <div class="form-check">
+            <input id="remember_me" type="checkbox" name="remember">
+            <label for="remember_me">{{ __('remember_me') }}</label>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
+        {{-- Submit --}}
+        <button type="submit" class="btn-auth-primary">
+            <i class="bi bi-box-arrow-in-right"></i>
+            {{ __('login_button') }}
+        </button>
+
+        {{-- Links --}}
+        <div class="auth-links">
             @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
+                <a class="auth-link" href="{{ route('password.request') }}">
+                    {{ __('forgot_password') }}
                 </a>
             @endif
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
+            <a class="auth-link" href="{{ route('register') }}">
+                {{ __('no_account') }} <strong>{{ __('register_link') }}</strong>
+            </a>
         </div>
     </form>
+
 </x-guest-layout>

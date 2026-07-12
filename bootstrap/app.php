@@ -11,9 +11,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Middleware yang jalan di setiap request web
+        // SetLocale = atur bahasa dari session
+        $middleware->web(append: [
+            \App\Http\Middleware\SetLocale::class,
+        ]);
+
+        // Alias middleware untuk proteksi route
         $middleware->alias([
-        'admin' => \App\Http\Middleware\AdminMiddleware::class,
-    ]);
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'user' => \App\Http\Middleware\UserMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
