@@ -2,41 +2,44 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Negara;
-use App\Models\SkorRisiko;
-use App\Models\Berita;
-use App\Models\LogApi;
-use Illuminate\Support\Facades\Auth;
+use App\Models\ApiLog;
+use App\Models\Country;
+use App\Models\News;
+use App\Models\RiskScore;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $totalNegara = Negara::count();
+        $totalCountries = Country::count();
 
-        $risikoTinggi = SkorRisiko::where('kategori', 'High')->count();
+        $highRisk = RiskScore::where('category', 'High')->count();
 
-        $risikoSedang = SkorRisiko::where('kategori', 'Medium')->count();
+        $mediumRisk = RiskScore::where('category', 'Medium')->count();
 
-        $risikoRendah = SkorRisiko::where('kategori', 'Low')->count();
+        $lowRisk = RiskScore::where('category', 'Low')->count();
 
-        $topRisiko = SkorRisiko::with('negara')
-            ->orderByDesc('total_skor')
+        $topRisks = RiskScore::with('country')
+            ->orderByDesc('total_score')
             ->take(10)
             ->get();
 
-        $berita = Berita::latest()->take(8)->get();
+        $news = News::latest()
+            ->take(8)
+            ->get();
 
-        $logApi = LogApi::latest()->take(5)->get();
+        $apiLogs = ApiLog::latest()
+            ->take(5)
+            ->get();
 
         return view('dashboard.index', compact(
-            'totalNegara',
-            'risikoTinggi',
-            'risikoSedang',
-            'risikoRendah',
-            'topRisiko',
-            'berita',
-            'logApi'
+            'totalCountries',
+            'highRisk',
+            'mediumRisk',
+            'lowRisk',
+            'topRisks',
+            'news',
+            'apiLogs'
         ));
     }
 }

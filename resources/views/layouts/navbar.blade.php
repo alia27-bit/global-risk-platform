@@ -1,99 +1,138 @@
-<?php
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
 
-return [
+    <div class="container-fluid">
 
-    'supported' => [
+        {{-- Logo --}}
+        <a class="navbar-brand fw-bold" href="{{ route('dashboard') }}">
+            <i class="bi bi-globe-americas me-2"></i>
+            {{ config('app.name') }}
+        </a>
 
-        'en' => [
-            'name' => 'English',
-            'flag' => '🇺🇸'
-        ],
+        {{-- Mobile Toggle --}}
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarMenu">
 
-        'id' => [
-            'name' => 'Indonesia',
-            'flag' => '🇮🇩'
-        ],
+            <span class="navbar-toggler-icon"></span>
 
-        'fr' => [
-            'name' => 'Français',
-            'flag' => '🇫🇷'
-        ],
+        </button>
 
-        'de' => [
-            'name' => 'Deutsch',
-            'flag' => '🇩🇪'
-        ],
+        <div class="collapse navbar-collapse" id="navbarMenu">
 
-        'es' => [
-            'name' => 'Español',
-            'flag' => '🇪🇸'
-        ],
+            <ul class="navbar-nav ms-auto align-items-center">
 
-        'it' => [
-            'name' => 'Italiano',
-            'flag' => '🇮🇹'
-        ],
+                {{-- Language --}}
+                <li class="nav-item dropdown me-3">
 
-        'pt' => [
-            'name' => 'Português',
-            'flag' => '🇵🇹'
-        ],
+                    <a class="nav-link dropdown-toggle"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown">
 
-        'nl' => [
-            'name' => 'Nederlands',
-            'flag' => '🇳🇱'
-        ],
+                        <i class="bi bi-translate"></i>
 
-        'ru' => [
-            'name' => 'Русский',
-            'flag' => '🇷🇺'
-        ],
+                        {{ strtoupper(app()->getLocale()) }}
 
-        'tr' => [
-            'name' => 'Türkçe',
-            'flag' => '🇹🇷'
-        ],
+                    </a>
 
-        'ar' => [
-            'name' => 'العربية',
-            'flag' => '🇸🇦'
-        ],
+                    <ul class="dropdown-menu dropdown-menu-end">
 
-        'hi' => [
-            'name' => 'हिन्दी',
-            'flag' => '🇮🇳'
-        ],
+                        <li>
 
-        'ja' => [
-            'name' => '日本語',
-            'flag' => '🇯🇵'
-        ],
+                            <a class="dropdown-item"
+                               href="{{ route('language.switch','id') }}">
 
-        'ko' => [
-            'name' => '한국어',
-            'flag' => '🇰🇷'
-        ],
+                                🇮🇩 Indonesia
 
-        'zh' => [
-            'name' => '中文',
-            'flag' => '🇨🇳'
-        ],
+                            </a>
 
-        'th' => [
-            'name' => 'ไทย',
-            'flag' => '🇹🇭'
-        ],
+                        </li>
 
-        'vi' => [
-            'name' => 'Tiếng Việt',
-            'flag' => '🇻🇳'
-        ],
+                        <li>
 
-        'ms' => [
-            'name' => 'Bahasa Melayu',
-            'flag' => '🇲🇾'
-        ],
+                            <a class="dropdown-item"
+                               href="{{ route('language.switch','en') }}">
 
-    ]
+                                🇺🇸 English
 
-];
+                            </a>
+
+                        </li>
+
+                    </ul>
+
+                </li>
+
+                {{-- User --}}
+                <li class="nav-item dropdown">
+
+                    <a class="nav-link dropdown-toggle"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown">
+
+                        <i class="bi bi-person-circle"></i>
+
+                        {{ auth()->user()->nama }}
+
+                        <span class="badge bg-primary ms-1">
+
+                            {{ ucfirst(auth()->user()->peran) }}
+
+                        </span>
+
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+
+                            <a class="dropdown-item"
+                               href="{{ route('profile.edit') }}">
+
+                                <i class="bi bi-person me-2"></i>
+
+                                {{ __('messages.profile') }}
+
+                            </a>
+
+                        </li>
+
+                        <li>
+
+                            <hr class="dropdown-divider">
+
+                        </li>
+
+                        <li>
+
+                            <form action="{{ route('logout') }}"
+                                  method="POST">
+
+                                @csrf
+
+                                <button
+                                    class="dropdown-item text-danger">
+
+                                    <i class="bi bi-box-arrow-right me-2"></i>
+
+                                    {{ __('messages.logout') }}
+
+                                </button>
+
+                            </form>
+
+                        </li>
+
+                    </ul>
+
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</nav>

@@ -6,20 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('exchange_rates', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('country_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            $table->string('base_currency');
+            $table->string('target_currency');
+
+            $table->decimal('exchange_rate',15,4);
+
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('exchange_rates');

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,70 +9,55 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
-public function artikel()
-{
-    return $this->hasMany(Artikel::class);
-}
 
-public function daftarPantauan()
-{
-    return $this->hasMany(DaftarPantauan::class);
-}
-
-public function logSistem()
-{
-    return $this->hasMany(LogSistem::class);
-}
-
-public function notifikasi()
-{
-    return $this->hasMany(Notifikasi::class);
-}
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'nama',
         'email',
         'password',
-        'peran',     // peran user: 'admin' atau 'user'
+        'peran',
     ];
 
-    public function getNameAttribute(): ?string
-    {
-        return $this->attributes['nama'] ?? null;
-    }
-
-    public function setNameAttribute(?string $value): void
-    {
-        $this->attributes['nama'] = $value;
-    }
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function articles()
+    {
+        return $this->hasMany(Article::class);
+    }
+
+    public function watchlists()
+    {
+        return $this->hasMany(Watchlist::class);
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    public function systemLogs()
+    {
+        return $this->hasMany(SystemLog::class);
+    }
+
+    public function getNameAttribute()
+    {
+        return $this->nama;
+    }
+
+    public function setNameAttribute($value)
+    {
+        $this->attributes['nama'] = $value;
     }
 }

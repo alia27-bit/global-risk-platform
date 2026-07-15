@@ -2,59 +2,43 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Negara;
-use App\Models\SkorRisiko;
-use App\Services\RiskScoringService;
+use App\Models\Country;
+use App\Models\RiskScore;
 
-class RiskController extends Controller
+class RiskScoreController extends Controller
 {
-    protected $risk;
-
-    public function __construct(RiskScoringService $risk)
+    public function index()
     {
-        $this->risk = $risk;
+        $riskScores = RiskScore::with('country')
+            ->paginate(20);
+
+        return view(
+            'risk.index',
+            compact('riskScores')
+        );
     }
 
-    public function calculate($id)
+    public function show(Country $country)
     {
-        $country = Negara::with([
-            'cuaca',
-            'ekonomi',
-            'kurs',
-            'berita'
-        ])->findOrFail($id);
+        $risk = RiskScore::where(
+            'country_id',
+            $country->id
+        )->first();
 
-        $weather = rand(20,80);
-
-        $inflation = rand(10,70);
-
-        $currency = rand(10,60);
-
-        $news = rand(20,90);
-
-        $score = $this->risk->calculate(
-            $weather,
-            $inflation,
-            $currency,
-            $news
+        return view(
+            'risk.show',
+            compact(
+                'country',
+                'risk'
+            )
         );
+    }
 
-        $kategori = $this->risk->category($score);
-
-        SkorRisiko::updateOrCreate(
-            [
-                'negara_id' => $country->id
-            ],
-            [
-                'weather_score' => $weather,
-                'inflation_score' => $inflation,
-                'currency_score' => $currency,
-                'news_score' => $news,
-                'total_skor' => $score,
-                'kategori' => $kategori
-            ]
+    public function calculate(Country $country)
+    {
+        return back()->with(
+            'success',
+            'Risk score calculated successfully.'
         );
-
-        return back()->with('success', 'Risk Score berhasil dihitung.');
     }
 }

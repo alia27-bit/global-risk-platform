@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ app()->getLocale() }}">
 
 <head>
 
@@ -10,8 +10,7 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Dashboard') — Global Risk Platform</title>
-
+<title>@yield('title', __('messages.dashboard')) - {{ config('app.name') }}</title>
     {{-- Google Font: Inter --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -807,12 +806,14 @@
             }
         }
     </style>
-
+@stack('styles')
 </head>
 
-<body>
+<body class="bg-light">
 
-@include('layouts.navbar')
+@include('layouts.script')
+
+@stack('scripts')
 
 <div class="container-fluid p-0">
 

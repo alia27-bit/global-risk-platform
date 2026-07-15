@@ -2,25 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Negara;
+use App\Models\Country;
+use Illuminate\Http\Request;
 
 class ComparisonController extends Controller
 {
     public function index()
     {
-        $countries = Negara::orderBy('nama_negara')->get();
+        $countries = Country::orderBy('name')->get();
 
-        return view('comparison.index', compact('countries'));
+        return view(
+            'comparison.index',
+            compact('countries')
+        );
     }
 
-    public function compare()
+    public function compare(Request $request)
     {
-        $left = Negara::findOrFail(request('left'));
-        $right = Negara::findOrFail(request('right'));
+        $countryA = Country::findOrFail($request->country_a);
+        $countryB = Country::findOrFail($request->country_b);
 
-        return view('comparison.result', compact(
-            'left',
-            'right'
-        ));
+        return view(
+            'comparison.result',
+            compact(
+                'countryA',
+                'countryB'
+            )
+        );
     }
 }

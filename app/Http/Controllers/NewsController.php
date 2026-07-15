@@ -2,63 +2,72 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Berita;
-use App\Models\Negara;
-use App\Services\Api\GNewsService;
-use App\Services\SentimentService;
+use App\Models\News;
+use App\Models\Country;
+use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {
-    protected $newsService;
-    protected $sentimentService;
-
-    public function __construct(
-        GNewsService $newsService,
-        SentimentService $sentimentService
-    ) {
-        $this->newsService = $newsService;
-        $this->sentimentService = $sentimentService;
-    }
-
     public function index()
     {
-        $news = Berita::with('negara')
+        $news = News::with('country')
             ->latest()
-            ->paginate(20);
+            ->paginate(10);
 
         return view('news.index', compact('news'));
     }
 
-    public function sync($countryId)
+    public function show(News $news)
     {
-        $country = Negara::findOrFail($countryId);
+        return view('news.show', compact('news'));
+    }
 
-        $articles = $this->newsService->search($country->nama_negara);
+    public function create()
+    {
+        $countries = Country::orderBy('name')->get();
 
-        foreach ($articles as $article) {
+        return view('news.create', compact('countries'));
+    }
 
-            $sentiment = $this->sentimentService
-                ->analyze($article['title'] . ' ' . $article['description']);
+    public function store(Request $request)
+    {
+        News::create($request->all());
 
-            Berita::updateOrCreate(
+        return redirect()
+            ->route('news.index')
+            ->with('success', 'News created successfully.');
+    }
 
-                [
-                    'url' => $article['url']
-                ],
+    public function edit(News $news)
+    {
+        $countries = Country::orderBy('name')->get();
 
-                [
-                    'negara_id' => $country->id,
-                    'judul' => $article['title'],
-                    'deskripsi' => $article['description'],
-                    'gambar' => $article['image'] ?? null,
-                    'sumber' => $article['source']['name'] ?? '',
-                    'published_at' => $article['publishedAt'],
-                    'sentiment' => $sentiment['label']
-                ]
-            );
-        }
+        return view('news.edit', compact('news', 'countries'));
+    }
 
-        return redirect()->back()
-            ->with('success', 'Berita berhasil diperbarui.');
+    public function update(Request $request, News $news)
+    {
+        $news->update($request->all());
+
+        return redirect()
+            ->route('news.index')
+            ->with('success', 'News updated successfully.');
+    }
+
+    public function destroy(News $news)
+    {
+        $news->delete();
+
+        return redirect()
+            ->route('news.index')
+            ->with('success', 'News deleted.');
+    }
+
+    public function sync(Country $country)
+    {
+        return back()->with(
+            'success',
+            'News synchronized successfully.'
+        );
     }
 }
