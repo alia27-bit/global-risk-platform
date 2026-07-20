@@ -11,20 +11,19 @@ class CountryResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'iso3_code' => $this->kode_iso3,
-            'iso2_code' => $this->kode_iso2,
-            'name' => $this->nama_negara,
-            'capital' => $this->ibukota,
-            'region' => $this->wilayah,
-            'sub_region' => $this->sub_wilayah,
-            'currency' => $this->mata_uang,
-            'population' => $this->populasi,
+            'code' => $this->code,
+            'name' => $this->name,
+            'capital' => $this->capital,
+            'region' => $this->region,
+            'subregion' => $this->subregion,
+            'currency' => $this->currency,
+            'currency_code' => $this->currency_code,
+            'languages' => $this->languages ?? [],
+            'population' => $this->population,
             'latitude' => (float) $this->latitude,
             'longitude' => (float) $this->longitude,
-            'flag_url' => $this->bendera,
-            'risk_score' => new RiskScoreResource($this->whenLoaded('skorRisiko', function () {
-                return $this->skorRisiko->first();
-            })),
+            'flag_url' => $this->flag,
+            'risk_score' => new RiskScoreResource($this->whenLoaded('riskScore')),
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];

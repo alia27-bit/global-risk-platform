@@ -11,12 +11,11 @@ class PortResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'country_id' => $this->negara_id,
-            'name' => $this->nama_pelabuhan,
-            'city' => $this->kota,
-            'latitude' => (float) $this->lintang,
-            'longitude' => (float) $this->bujur,
-            'operational_status' => $this->status_operasional,
+            'country_id' => $this->country_id,
+            'country' => new CountryResource($this->whenLoaded('country')),
+            'name' => $this->name,
+            'latitude' => (float) $this->latitude,
+            'longitude' => (float) $this->longitude,
         ];
     }
 }

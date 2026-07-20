@@ -11,11 +11,14 @@ class WeatherResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'country_id' => $this->negara_id,
-            'temperature' => (float) $this->temperatur,
-            'rainfall' => (float) $this->curah_hujan,
-            'wind_speed' => (float) $this->kecepatan_angin,
-            'storm_risk' => (float) $this->risiko_badai,
+            'country_id' => $this->country_id,
+            'country' => new CountryResource($this->whenLoaded('country')),
+            'temperature' => (float) $this->temperature,
+            'rainfall' => (float) $this->rainfall,
+            'wind_speed' => (float) $this->wind_speed,
+            'weather_code' => $this->weather_code,
+            'storm_risk' => (float) $this->storm_risk,
+            'observed_at' => $this->observed_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];
     }

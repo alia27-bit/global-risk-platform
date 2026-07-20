@@ -7,15 +7,12 @@
 
         <title>{{ config('app.name', 'Global Risk Platform') }}</title>
 
-        {{-- Google Font: Inter --}}
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-        {{-- Bootstrap Icons --}}
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
-        {{-- Scripts --}}
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <style>
@@ -51,10 +48,10 @@
                 display: flex;
                 background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 40%, var(--navy-500) 100%);
                 position: relative;
-                overflow: hidden;
+                overflow-x: hidden;
+                overflow-y: auto;
             }
 
-            /* Background Pattern */
             body::before {
                 content: '';
                 position: fixed;
@@ -90,7 +87,6 @@
                 z-index: 1;
             }
 
-            /* Logo Section */
             .auth-logo {
                 text-align: center;
                 margin-bottom: 2rem;
@@ -124,7 +120,6 @@
                 font-weight: 400;
             }
 
-            /* Auth Card */
             .auth-card {
                 width: 100%;
                 max-width: 420px;
@@ -136,6 +131,55 @@
                     0 25px 60px rgba(0, 0, 0, 0.3),
                     0 0 0 1px rgba(255, 255, 255, 0.08);
                 animation: cardSlideUp 0.6s ease-out;
+            }
+
+            .auth-card-login {
+                margin-top: -18px;
+                margin-bottom: 18px;
+            }
+
+            .login-page .auth-wrapper {
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
+
+            .login-page .auth-logo {
+                margin-bottom: 1.25rem;
+            }
+
+            .login-page .auth-logo .logo-icon {
+                width: 48px;
+                height: 48px;
+                margin-bottom: 0.6rem;
+            }
+
+            .login-page .auth-card {
+                padding-top: 1.75rem;
+                padding-bottom: 1.75rem;
+            }
+
+            .login-page .auth-card .auth-subtitle {
+                margin-bottom: 1rem;
+            }
+
+            .login-page .auth-card .auth-subtitle + div {
+                margin-bottom: 1rem !important;
+            }
+
+            .login-page .form-group {
+                margin-bottom: 0.9rem;
+            }
+
+            .login-page .form-check {
+                margin: 0.75rem 0;
+            }
+
+            .login-page .auth-links {
+                margin-top: 0.9rem;
+            }
+
+            .login-page .auth-footer {
+                margin-top: 0.75rem;
             }
 
             @keyframes cardSlideUp {
@@ -164,7 +208,6 @@
                 margin-bottom: 1.75rem;
             }
 
-            /* Form Styles */
             .form-group {
                 margin-bottom: 1.25rem;
             }
@@ -224,7 +267,6 @@
                 font-size: 0.82rem;
             }
 
-            /* Error Messages */
             .input-error {
                 color: #ef4444;
                 font-size: 0.72rem;
@@ -232,7 +274,6 @@
                 font-weight: 500;
             }
 
-            /* Checkbox */
             .form-check {
                 display: flex;
                 align-items: center;
@@ -253,7 +294,6 @@
                 cursor: pointer;
             }
 
-            /* Buttons */
             .btn-auth-primary {
                 width: 100%;
                 padding: 0.75rem;
@@ -283,7 +323,6 @@
                 transform: translateY(0);
             }
 
-            /* Links */
             .auth-links {
                 display: flex;
                 align-items: center;
@@ -306,7 +345,6 @@
                 text-decoration: underline;
             }
 
-            /* Divider */
             .auth-divider {
                 display: flex;
                 align-items: center;
@@ -327,7 +365,6 @@
                 background: var(--gray-200);
             }
 
-            /* Session Status */
             .auth-status {
                 background: rgba(16, 185, 129, 0.1);
                 color: #059669;
@@ -338,7 +375,6 @@
                 border: 1px solid rgba(16, 185, 129, 0.2);
             }
 
-            /* Footer */
             .auth-footer {
                 text-align: center;
                 margin-top: 1.5rem;
@@ -347,10 +383,9 @@
             }
         </style>
     </head>
-    <body>
+    <body class="{{ request()->routeIs('login') ? 'login-page' : '' }}">
         <div class="auth-wrapper">
 
-            {{-- Logo --}}
             <div class="auth-logo">
                 <div class="logo-icon">
                     <i class="bi bi-shield-check"></i>
@@ -359,12 +394,10 @@
                 <p>Supply Chain Risk Intelligence</p>
             </div>
 
-            {{-- Card --}}
-            <div class="auth-card">
+            <div class="auth-card {{ request()->routeIs('login') ? 'auth-card-login' : '' }}">
                 {{ $slot }}
             </div>
 
-            {{-- Footer --}}
             <div class="auth-footer">
                 © {{ date('Y') }} Global Supply Chain Risk Intelligence Platform
             </div>

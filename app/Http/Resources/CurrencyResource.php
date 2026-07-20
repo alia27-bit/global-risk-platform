@@ -11,9 +11,10 @@ class CurrencyResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'country_id' => $this->negara_id,
-            'currency_code' => $this->mata_uang,
-            'exchange_rate_to_usd' => (float) $this->kurs,
+            'country_id' => $this->country_id,
+            'base_currency' => $this->base_currency,
+            'target_currency' => $this->target_currency,
+            'exchange_rate' => (float) $this->exchange_rate,
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];
     }

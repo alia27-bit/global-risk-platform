@@ -14,6 +14,8 @@ class EconomicIndicator extends Model
         'inflation',
         'gdp',
         'unemployment',
+        'exports',
+        'imports',
     ];
 
     public function country()

@@ -1,0 +1,1 @@
+@extends('layouts.app') @section('title','Tambah Pelabuhan') @section('content')<div class="container-fluid"><div class="info-card"><div class="card-header-navy">Tambah Pelabuhan</div><div class="card-body"><form method="POST" action="{{ route('ports.store') }}">@include('ports._form')</form></div></div></div>@endsection

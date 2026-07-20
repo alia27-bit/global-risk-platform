@@ -3,6 +3,13 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiController;
 
+// Endpoint tanpa versi dipertahankan sesuai kontrak tugas.
+Route::get('/countries', [ApiController::class, 'countries']);
+Route::get('/risk', [ApiController::class, 'riskScores']);
+Route::get('/ports', [ApiController::class, 'ports']);
+Route::get('/news', [ApiController::class, 'news']);
+Route::get('/currency', [ApiController::class, 'exchangeRates']);
+
 Route::prefix('v1')
     ->name('api.')
     ->group(function () {
@@ -14,6 +21,7 @@ Route::prefix('v1')
         */
 
         Route::get('/dashboard', [ApiController::class, 'dashboard']);
+        Route::get('/live', [ApiController::class, 'live']);
 
         /*
         |--------------------------------------------------------------------------

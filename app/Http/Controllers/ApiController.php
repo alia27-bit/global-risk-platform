@@ -2,192 +2,168 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Negara;
-use App\Models\Berita;
-use App\Models\Pelabuhan;
-use App\Models\SkorRisiko;
-use App\Models\NilaiTukar;
-use App\Models\DataCuaca;
-use App\Models\IndikatorEkonomi;
 use App\Http\Resources\CountryResource;
-use App\Http\Resources\RiskScoreResource;
-use App\Http\Resources\NewsResource;
-use App\Http\Resources\WeatherResource;
 use App\Http\Resources\CurrencyResource;
 use App\Http\Resources\EconomicResource;
+use App\Http\Resources\NewsResource;
 use App\Http\Resources\PortResource;
+use App\Http\Resources\RiskScoreResource;
+use App\Http\Resources\WeatherResource;
+use App\Models\Country;
+use App\Models\EconomicIndicator;
+use App\Models\ExchangeRate;
+use App\Models\News;
+use App\Models\Port;
+use App\Models\RiskScore;
+use App\Models\Weather;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class ApiController extends Controller
 {
-    /**
-     * GET /api/v1/countries
-     * List all countries with optional search & pagination
-     */
+    public function dashboard()
+    {
+        $latestRiskIds = RiskScore::query()->selectRaw('MAX(id)')->groupBy('country_id');
+        return response()->json([
+            'countries' => Country::count(),
+            'risk' => [
+                'low' => RiskScore::whereIn('id', $latestRiskIds)->where('category', 'Low')->count(),
+                'medium' => RiskScore::whereIn('id', $latestRiskIds)->where('category', 'Medium')->count(),
+                'high' => RiskScore::whereIn('id', $latestRiskIds)->where('category', 'High')->count(),
+            ],
+            'ports' => Port::count(),
+            'news' => News::count(),
+        ]);
+    }
+
+    public function live()
+    {
+        $latestWeatherIds = Weather::query()->selectRaw('MAX(id)')->groupBy('country_id');
+        $weather = Weather::with('country:id,name,code,latitude,longitude')
+            ->whereIn('id', $latestWeatherIds)->get()->map(fn (Weather $item) => [
+                'country' => $item->country?->name,
+                'code' => $item->country?->code,
+                'lat' => (float) $item->country?->latitude,
+                'lng' => (float) $item->country?->longitude,
+                'temperature' => (float) $item->temperature,
+                'rainfall' => (float) $item->rainfall,
+                'wind_speed' => (float) $item->wind_speed,
+                'weather_code' => (int) $item->weather_code,
+                'storm_risk' => (float) $item->storm_risk,
+                'observed_at' => $item->observed_at?->toIso8601String() ?? $item->updated_at?->toIso8601String(),
+                'url' => $item->country ? route('weather.show', $item->country) : null,
+            ]);
+
+        return response()->json([
+            'server_time' => now()->toIso8601String(),
+            'counts' => ['countries' => Country::count(), 'ports' => Port::count(), 'news' => News::count()],
+            'weather' => $weather,
+        ]);
+    }
+
     public function countries(Request $request)
     {
-        $query = Negara::query();
+        $query = Country::query()
+            ->when($request->string('search')->toString(), fn (Builder $query, string $search) =>
+                $query->where(fn (Builder $query) => $query
+                    ->where('name', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%")))
+            ->when($request->string('region')->toString(), fn (Builder $query, string $region) =>
+                $query->where('region', $region));
 
-        if ($search = $request->query('search')) {
-            $query->where('nama_negara', 'like', "%{$search}%")
-                  ->orWhere('kode_iso2', 'like', "%{$search}%")
-                  ->orWhere('kode_iso3', 'like', "%{$search}%");
-        }
-
-        if ($region = $request->query('region')) {
-            $query->where('wilayah', $region);
-        }
-
-        $perPage = min($request->query('per_page', 25), 100);
-
-        return CountryResource::collection(
-            $query->orderBy('nama_negara')->paginate($perPage)
-        );
+        return CountryResource::collection($query->orderBy('name')->paginate($this->perPage($request)));
     }
 
-    /**
-     * GET /api/v1/countries/{id}
-     * Get a single country with all related data
-     */
-    public function countryDetail($id)
+    public function country(Country $country)
     {
-        $country = Negara::with([
-            'skorRisiko',
-            'dataCuaca',
-            'nilaiTukar',
-            'indikatorEkonomi',
-            'berita' => fn($q) => $q->latest()->take(5),
-        ])->findOrFail($id);
-
-        return new CountryResource($country);
+        return new CountryResource($country->load([
+            'riskScore', 'weather', 'exchangeRate', 'economicIndicator', 'news.sentimentAnalysis', 'ports',
+        ]));
     }
 
-    /**
-     * GET /api/v1/risk-scores
-     * List all risk scores with country info
-     */
-    public function riskScores(Request $request)
+    public function weather(Request $request)
     {
-        $query = SkorRisiko::with('negara');
-
-        if ($category = $request->query('category')) {
-            $query->where('kategori', $category);
-        }
-
-        $query->orderByDesc('total_skor');
-
-        $perPage = min($request->query('per_page', 25), 100);
-
-        return RiskScoreResource::collection($query->paginate($perPage));
+        return WeatherResource::collection(Weather::with('country')->latest()->paginate($this->perPage($request)));
     }
 
-    /**
-     * GET /api/v1/countries/{id}/risk
-     */
-    public function countryRisk($id)
+    public function weatherDetail(Country $country)
     {
-        $risk = SkorRisiko::where('negara_id', $id)->first();
-
-        if (!$risk) {
-            return response()->json([
-                'message' => 'No risk score data available for this country.'
-            ], 404);
-        }
-
-        return new RiskScoreResource($risk);
+        return $country->weather
+            ? new WeatherResource($country->weather->load('country'))
+            : response()->json(['message' => 'Weather data is not available.'], 404);
     }
 
-    /**
-     * GET /api/v1/countries/{id}/weather
-     */
-    public function countryWeather($id)
+    public function economicIndicators(Request $request)
     {
-        $weather = DataCuaca::where('negara_id', $id)->latest()->first();
-
-        if (!$weather) {
-            return response()->json([
-                'message' => 'No weather data available for this country.'
-            ], 404);
-        }
-
-        return new WeatherResource($weather);
+        return EconomicResource::collection(EconomicIndicator::with('country')->latest()->paginate($this->perPage($request)));
     }
 
-    /**
-     * GET /api/v1/countries/{id}/currency
-     */
-    public function countryCurrency($id)
+    public function economicDetail(Country $country)
     {
-        $currency = NilaiTukar::where('negara_id', $id)->latest()->first();
-
-        if (!$currency) {
-            return response()->json([
-                'message' => 'No currency data available for this country.'
-            ], 404);
-        }
-
-        return new CurrencyResource($currency);
+        return $country->economicIndicator
+            ? new EconomicResource($country->economicIndicator->load('country'))
+            : response()->json(['message' => 'Economic data is not available.'], 404);
     }
 
-    /**
-     * GET /api/v1/countries/{id}/economy
-     */
-    public function countryEconomy($id)
+    public function exchangeRates(Request $request)
     {
-        $economy = IndikatorEkonomi::where('negara_id', $id)->latest()->first();
-
-        if (!$economy) {
-            return response()->json([
-                'message' => 'No economic data available for this country.'
-            ], 404);
-        }
-
-        return new EconomicResource($economy);
+        return CurrencyResource::collection(ExchangeRate::with('country')->latest()->paginate($this->perPage($request)));
     }
 
-    /**
-     * GET /api/v1/countries/{id}/news
-     */
-    public function countryNews($id)
+    public function exchangeDetail(Country $country)
     {
-        $news = Berita::where('negara_id', $id)
-            ->latest('published_at')
-            ->paginate(20);
-
-        return NewsResource::collection($news);
+        return $country->exchangeRate
+            ? new CurrencyResource($country->exchangeRate->load('country'))
+            : response()->json(['message' => 'Exchange-rate data is not available.'], 404);
     }
 
-    /**
-     * GET /api/v1/news
-     * List all news globally
-     */
     public function news(Request $request)
     {
-        $query = Berita::with('negara')->latest('published_at');
-
-        if ($sentiment = $request->query('sentiment')) {
-            $query->where('sentiment', $sentiment);
+        $query = News::with(['country', 'sentimentAnalysis'])->latest('published_at');
+        if ($sentiment = $request->string('sentiment')->toString()) {
+            $query->whereHas('sentimentAnalysis', fn (Builder $query) => $query->where('result', $sentiment));
         }
 
-        $perPage = min($request->query('per_page', 20), 100);
-
-        return NewsResource::collection($query->paginate($perPage));
+        return NewsResource::collection($query->paginate($this->perPage($request, 20)));
     }
 
-    /**
-     * GET /api/v1/ports
-     */
+    public function newsDetail(Country $country, Request $request)
+    {
+        return NewsResource::collection($country->news()->with('sentimentAnalysis')->latest('published_at')->paginate($this->perPage($request, 20)));
+    }
+
     public function ports(Request $request)
     {
-        $query = Pelabuhan::query();
+        $query = Port::with('country')->when($request->string('search')->toString(), fn (Builder $query, string $search) =>
+            $query->where('name', 'like', "%{$search}%")
+                ->orWhereHas('country', fn (Builder $query) => $query->where('name', 'like', "%{$search}%")));
 
-        if ($search = $request->query('search')) {
-            $query->where('nama_pelabuhan', 'like', "%{$search}%")
-                  ->orWhere('kota', 'like', "%{$search}%");
-        }
+        return PortResource::collection($query->orderBy('name')->paginate($this->perPage($request)));
+    }
 
-        $perPage = min($request->query('per_page', 25), 100);
+    public function portDetail(Country $country)
+    {
+        return PortResource::collection($country->ports()->with('country')->orderBy('name')->get());
+    }
 
-        return PortResource::collection($query->paginate($perPage));
+    public function riskScores(Request $request)
+    {
+        $latestIds = RiskScore::query()->selectRaw('MAX(id)')->groupBy('country_id');
+        $query = RiskScore::whereIn('id', $latestIds)->with('country')
+            ->when($request->string('category')->toString(), fn (Builder $query, string $category) => $query->where('category', $category));
+
+        return RiskScoreResource::collection($query->orderByDesc('total_score')->paginate($this->perPage($request)));
+    }
+
+    public function riskDetail(Country $country)
+    {
+        return $country->riskScore
+            ? new RiskScoreResource($country->riskScore->load('country'))
+            : response()->json(['message' => 'Risk score is not available.'], 404);
+    }
+
+    private function perPage(Request $request, int $default = 25): int
+    {
+        return min(100, max(1, $request->integer('per_page', $default)));
     }
 }

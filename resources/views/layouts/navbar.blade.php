@@ -2,13 +2,11 @@
 
     <div class="container-fluid">
 
-        {{-- Logo --}}
         <a class="navbar-brand fw-bold" href="{{ route('dashboard') }}">
             <i class="bi bi-globe-americas me-2"></i>
             {{ config('app.name') }}
         </a>
 
-        {{-- Mobile Toggle --}}
         <button class="navbar-toggler"
                 type="button"
                 data-bs-toggle="collapse"
@@ -22,7 +20,6 @@
 
             <ul class="navbar-nav ms-auto align-items-center">
 
-                {{-- Language --}}
                 <li class="nav-item dropdown me-3">
 
                     <a class="nav-link dropdown-toggle"
@@ -64,7 +61,6 @@
 
                 </li>
 
-                {{-- User --}}
                 <li class="nav-item dropdown">
 
                     <a class="nav-link dropdown-toggle"

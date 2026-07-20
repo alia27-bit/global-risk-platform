@@ -10,13 +10,18 @@ class WatchlistController extends Controller
 {
     public function index()
     {
-        $watchlists = Watchlist::with('country')
+        $watchlists = Watchlist::with('country.riskScore')
             ->where('user_id', Auth::id())
+            ->get();
+
+        $countries = Country::query()
+            ->whereNotIn('id', $watchlists->pluck('country_id'))
+            ->orderBy('name')
             ->get();
 
         return view(
             'watchlist.index',
-            compact('watchlists')
+            compact('watchlists', 'countries')
         );
     }
 
@@ -35,6 +40,8 @@ class WatchlistController extends Controller
 
     public function destroy(Watchlist $watchlist)
     {
+        abort_unless($watchlist->user_id === Auth::id(), 403);
+
         $watchlist->delete();
 
         return back()->with(

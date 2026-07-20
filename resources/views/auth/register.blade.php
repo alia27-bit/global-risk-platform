@@ -3,7 +3,6 @@
     <h2>{{ __('register_title') }}</h2>
     <p class="auth-subtitle">{{ __('register_subtitle') }}</p>
 
-    {{-- Language Switcher di halaman register --}}
     <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem;">
         <a href="{{ route('language.switch', 'id') }}"
            style="display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.3rem 0.7rem; border-radius: 6px; font-size: 0.75rem; font-weight: 500; text-decoration: none; transition: all 0.2s;
@@ -20,7 +19,6 @@
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
-        {{-- Nama --}}
         <div class="form-group">
             <label for="name">{{ __('full_name') }}</label>
             <div class="input-wrapper">
@@ -41,7 +39,6 @@
             @enderror
         </div>
 
-        {{-- Email --}}
         <div class="form-group">
             <label for="email">{{ __('email') }}</label>
             <div class="input-wrapper">
@@ -61,7 +58,6 @@
             @enderror
         </div>
 
-        {{-- Password --}}
         <div class="form-group">
             <label for="password">{{ __('password') }}</label>
             <div class="input-wrapper">
@@ -80,7 +76,6 @@
             @enderror
         </div>
 
-        {{-- Confirm Password --}}
         <div class="form-group">
             <label for="password_confirmation">{{ __('confirm_password') }}</label>
             <div class="input-wrapper">
@@ -99,13 +94,11 @@
             @enderror
         </div>
 
-        {{-- Submit --}}
         <button type="submit" class="btn-auth-primary">
             <i class="bi bi-person-plus"></i>
             {{ __('register_button') }}
         </button>
 
-        {{-- Link ke Login --}}
         <div class="auth-links" style="justify-content: center;">
             <a class="auth-link" href="{{ route('login') }}">
                 {{ __('has_account') }} <strong>{{ __('login_link') }}</strong>

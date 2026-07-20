@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ComparisonController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\DashboardController;
@@ -12,7 +13,7 @@ use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PortController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RiskScoreController;
+use App\Http\Controllers\RiskController;
 use App\Http\Controllers\WatchlistController;
 use App\Http\Controllers\WeatherController;
 
@@ -64,11 +65,12 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::resource('countries', CountryController::class);
-
     Route::get('/countries/sync',
         [CountryController::class,'sync'])
-        ->name('countries.sync');
+        ->middleware('admin')->name('countries.sync');
+
+    Route::resource('countries', CountryController::class)->except(['index', 'show'])->middleware('admin');
+    Route::resource('countries', CountryController::class)->only(['index', 'show']);
 
     /*
     |--------------------------------------------------------------------------
@@ -76,13 +78,17 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
 
+    Route::get('/weather/map',
+        [WeatherController::class,'map'])
+        ->name('weather.map');
+
     Route::get('/weather/{country}',
         [WeatherController::class,'show'])
         ->name('weather.show');
 
     Route::get('/weather/{country}/sync',
         [WeatherController::class,'sync'])
-        ->name('weather.sync');
+        ->middleware('admin')->name('weather.sync');
 
     /*
     |--------------------------------------------------------------------------
@@ -90,13 +96,17 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
 
+    Route::get('/economic',
+        [EconomicIndicatorController::class,'index'])
+        ->name('economy.index');
+
     Route::get('/economic/{country}',
         [EconomicIndicatorController::class,'show'])
         ->name('economy.show');
 
     Route::get('/economic/{country}/sync',
         [EconomicIndicatorController::class,'sync'])
-        ->name('economy.sync');
+        ->middleware('admin')->name('economy.sync');
 
     /*
     |--------------------------------------------------------------------------
@@ -104,13 +114,17 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
 
+    Route::get('/exchange',
+        [ExchangeRateController::class,'index'])
+        ->name('exchange.index');
+
     Route::get('/exchange/{country}',
         [ExchangeRateController::class,'show'])
         ->name('exchange.show');
 
     Route::get('/exchange/{country}/sync',
         [ExchangeRateController::class,'sync'])
-        ->name('exchange.sync');
+        ->middleware('admin')->name('exchange.sync');
 
     /*
     |--------------------------------------------------------------------------
@@ -118,19 +132,21 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::resource('news', NewsController::class);
+    Route::get('/news/sync/global', [NewsController::class, 'syncGlobal'])
+        ->middleware('admin')->name('news.sync-global');
 
     Route::get('/news/{country}/sync',
         [NewsController::class,'sync'])
-        ->name('news.sync');
+        ->middleware('admin')->name('news.sync');
+
+    Route::resource('news', NewsController::class)->except(['index', 'show'])->middleware('admin');
+    Route::resource('news', NewsController::class)->only(['index', 'show']);
 
     /*
     |--------------------------------------------------------------------------
     | Ports
     |--------------------------------------------------------------------------
     */
-
-    Route::resource('ports', PortController::class);
 
     Route::get('/ports/map',
         [PortController::class,'map'])
@@ -140,6 +156,12 @@ Route::middleware('auth')->group(function () {
         [PortController::class,'search'])
         ->name('ports.search');
 
+    Route::get('/ports/sync', [PortController::class, 'sync'])
+        ->middleware('admin')->name('ports.sync');
+
+    Route::resource('ports', PortController::class)->except(['index', 'show'])->middleware('admin');
+    Route::resource('ports', PortController::class)->only(['index', 'show']);
+
     /*
     |--------------------------------------------------------------------------
     | Risk Score
@@ -147,16 +169,16 @@ Route::middleware('auth')->group(function () {
     */
 
     Route::get('/risk',
-        [RiskScoreController::class,'index'])
+        [RiskController::class,'index'])
         ->name('risk.index');
 
     Route::get('/risk/{country}',
-        [RiskScoreController::class,'show'])
+        [RiskController::class,'show'])
         ->name('risk.show');
 
     Route::get('/risk/{country}/calculate',
-        [RiskScoreController::class,'calculate'])
-        ->name('risk.calculate');
+        [RiskController::class,'calculate'])
+        ->middleware('admin')->name('risk.calculate');
 
     /*
     |--------------------------------------------------------------------------
@@ -164,17 +186,19 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::get('/watchlist',
-        [WatchlistController::class,'index'])
-        ->name('watchlist.index');
+    Route::middleware('user')->group(function () {
+        Route::get('/watchlist',
+            [WatchlistController::class,'index'])
+            ->name('watchlist.index');
 
-    Route::post('/watchlist/{country}',
-        [WatchlistController::class,'store'])
-        ->name('watchlist.store');
+        Route::post('/watchlist/{country}',
+            [WatchlistController::class,'store'])
+            ->name('watchlist.store');
 
-    Route::delete('/watchlist/{watchlist}',
-        [WatchlistController::class,'destroy'])
-        ->name('watchlist.destroy');
+        Route::delete('/watchlist/{watchlist}',
+            [WatchlistController::class,'destroy'])
+            ->name('watchlist.destroy');
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -205,5 +229,10 @@ Route::middleware(['auth','admin'])
         Route::get('/',
             [AdminController::class,'dashboard'])
             ->name('dashboard');
+
+        Route::get('/users', [AdminController::class, 'users'])->name('users.index');
+        Route::patch('/users/{user}/role', [AdminController::class, 'updateRole'])->name('users.role');
+        Route::delete('/users/{user}', [AdminController::class, 'destroyUser'])->name('users.destroy');
+        Route::resource('articles', ArticleController::class);
 
     });

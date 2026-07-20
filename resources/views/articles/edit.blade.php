@@ -1,0 +1,1 @@
+@extends('layouts.app') @section('title','Edit Artikel') @section('content')<div class="container-fluid"><div class="info-card"><div class="card-header-navy">Edit Artikel</div><div class="card-body"><form method="POST" action="{{ route('admin.articles.update',$article) }}">@method('PUT') @include('articles._form')</form></div></div></div>@endsection

@@ -12,6 +12,7 @@ class Country extends Model
     protected $fillable = [
         'name',
         'code',
+        'alpha2',
         'capital',
         'region',
         'subregion',
@@ -20,22 +21,28 @@ class Country extends Model
         'longitude',
         'currency',
         'currency_code',
+        'languages',
         'flag',
     ];
 
+    protected function casts(): array
+    {
+        return ['languages' => 'array'];
+    }
+
     public function weather()
     {
-        return $this->hasOne(Weather::class);
+        return $this->hasOne(Weather::class)->latestOfMany();
     }
 
     public function economicIndicator()
     {
-        return $this->hasOne(EconomicIndicator::class);
+        return $this->hasOne(EconomicIndicator::class)->latestOfMany();
     }
 
     public function exchangeRate()
     {
-        return $this->hasOne(ExchangeRate::class);
+        return $this->hasOne(ExchangeRate::class)->latestOfMany();
     }
 
     public function ports()
@@ -50,7 +57,7 @@ class Country extends Model
 
     public function riskScore()
     {
-        return $this->hasOne(RiskScore::class);
+        return $this->hasOne(RiskScore::class)->latestOfMany();
     }
 
     public function watchlists()

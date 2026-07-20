@@ -1,0 +1,1 @@
+@extends('layouts.app') @section('title','Tambah Negara') @section('content')<div class="container-fluid"><div class="info-card"><div class="card-header-navy"><i class="bi bi-plus-circle"></i>Tambah Negara</div><div class="card-body"><form method="POST" action="{{ route('countries.store') }}">@include('countries._form')</form></div></div></div>@endsection

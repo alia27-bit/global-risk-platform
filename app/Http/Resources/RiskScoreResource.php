@@ -11,14 +11,14 @@ class RiskScoreResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'country_id' => $this->negara_id,
-            'country' => new CountryResource($this->whenLoaded('negara')),
+            'country_id' => $this->country_id,
+            'country' => new CountryResource($this->whenLoaded('country')),
             'weather_score' => (float) $this->weather_score,
-            'inflation_score' => (float) $this->inflation_score,
+            'economic_score' => (float) $this->economic_score,
             'currency_score' => (float) $this->currency_score,
             'news_score' => (float) $this->news_score,
-            'total_score' => (float) $this->total_skor,
-            'category' => $this->kategori,
+            'total_score' => (float) $this->total_score,
+            'category' => $this->category,
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];

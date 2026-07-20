@@ -15,6 +15,7 @@
 
         <div class="d-flex gap-2">
 
+            @if(auth()->user()->peran === 'admin')
             <a href="{{ route('countries.sync') }}"
                 class="btn btn-success">
 
@@ -23,6 +24,7 @@
                 Sinkronisasi API
 
             </a>
+            @endif
 
             <a href="{{ route('countries.index') }}"
                 class="btn btn-primary">
@@ -169,6 +171,7 @@
                                         <i class="bi bi-eye"></i> {{ __('messages.detail') }}
                                     </a>
 
+                                    @if(auth()->user()->peran === 'admin')
                                     <a href="{{ route('weather.sync', $item->id) }}"
                                         class="btn btn-warning btn-sm"
                                         title="Sync Cuaca">
@@ -180,6 +183,19 @@
                                         title="Hitung Risk">
                                         <i class="bi bi-shield-exclamation"></i>
                                     </a>
+
+                                    <div class="dropdown d-inline-block">
+                                        <button class="btn btn-outline-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" title="Sinkronisasi API">
+                                            <i class="bi bi-cloud-download"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li><a class="dropdown-item" href="{{ route('weather.sync', $item) }}"><i class="bi bi-cloud-sun me-2"></i>Open-Meteo</a></li>
+                                            <li><a class="dropdown-item" href="{{ route('economy.sync', $item) }}"><i class="bi bi-graph-up me-2"></i>World Bank</a></li>
+                                            <li><a class="dropdown-item" href="{{ route('exchange.sync', $item) }}"><i class="bi bi-currency-exchange me-2"></i>Exchange Rate</a></li>
+                                            <li><a class="dropdown-item" href="{{ route('news.sync', $item) }}"><i class="bi bi-newspaper me-2"></i>GNews</a></li>
+                                        </ul>
+                                    </div>
+                                    @endif
 
                                     @if(auth()->user()->peran === 'admin')
                                         <form action="{{ route('countries.destroy', $item) }}"

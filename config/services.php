@@ -13,7 +13,8 @@ return [
     ],
 
     'restcountries' => [
-        'url' => env('REST_COUNTRIES_URL'),
+        'url' => env('REST_COUNTRIES_URL', 'https://api.restcountries.com/countries/v5'),
+        'key' => env('REST_COUNTRIES_API_KEY'),
     ],
 
     'openmeteo' => [
@@ -21,7 +22,7 @@ return [
     ],
 
     'worldbank' => [
-        'url' => env('WORLD_BANK_URL'),
+        'url' => env('WORLD_BANK_URL', 'https://api.worldbank.org/v2'),
     ],
 
     'exchange' => [
@@ -36,6 +37,10 @@ return [
 
     'google_translate' => [
         'key' => env('GOOGLE_TRANSLATE_API_KEY'),
+    ],
+
+    'world_ports' => [
+        'url' => env('WORLD_PORT_API_URL', 'https://services-eu1.arcgis.com/BuS9rtTsYEV5C0xh/arcgis/rest/services/World_Port_Index/FeatureServer/0/query'),
     ],
 
 ];

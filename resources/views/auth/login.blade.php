@@ -3,14 +3,12 @@
     <h2>{{ __('messages.login_title') }}</h2>
     <p class="auth-subtitle">{{ __('messages.login_subtitle') }}</p>
 
-    {{-- Session Status --}}
     @if (session('status'))
         <div class="auth-status">
             {{ session('status') }}
         </div>
     @endif
 
-    {{-- Language Switcher --}}
     <div style="display: flex; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem;">
         <a href="{{ route('language.switch', 'id') }}"
            style="display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .7rem;border-radius:6px;font-size:.75rem;font-weight:500;text-decoration:none;
@@ -28,7 +26,6 @@
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        {{-- Email --}}
         <div class="form-group">
             <label for="email">{{ __('messages.email') }}</label>
 
@@ -51,7 +48,6 @@
             @enderror
         </div>
 
-        {{-- Password --}}
         <div class="form-group">
             <label for="password">{{ __('messages.password') }}</label>
 
@@ -72,7 +68,6 @@
             @enderror
         </div>
 
-        {{-- Remember Me --}}
         <div class="form-check">
             <input id="remember_me" type="checkbox" name="remember">
             <label for="remember_me">
@@ -80,13 +75,11 @@
             </label>
         </div>
 
-        {{-- Login Button --}}
         <button type="submit" class="btn-auth-primary">
             <i class="bi bi-box-arrow-in-right"></i>
             {{ __('messages.login_button') }}
         </button>
 
-        {{-- Links --}}
         <div class="auth-links">
 
             @if (Route::has('password.request'))

@@ -6,22 +6,17 @@ use Illuminate\Support\Facades\Http;
 
 class ExchangeRateService
 {
-
-    protected string $url='https://open.er-api.com/v6/latest/USD';
-
-    public function getRate($currency)
+    public function getRate(string $currency, string $base = 'USD'): ?float
     {
+        $url = rtrim(config('services.exchange.url', 'https://open.er-api.com/v6/latest'), '/').'/'.strtoupper($base);
+        $response = Http::acceptJson()->retry(2, 400)->timeout(20)->get($url);
 
-        $response=Http::get($this->url);
-
-        if(!$response->successful()){
+        if (! $response->successful() || $response->json('result') === 'error') {
             return null;
         }
 
-        $rates=$response->json()['rates'];
+        $rate = $response->json('rates.'.strtoupper($currency));
 
-        return $rates[$currency] ?? null;
-
+        return is_numeric($rate) ? (float) $rate : null;
     }
-
 }

@@ -14,7 +14,7 @@ class UserMiddleware
             return redirect('/login');
         }
 
-        if (!in_array(auth()->user()->peran, ['admin', 'user'])) {
+        if (auth()->user()->peran !== 'user') {
             abort(403, 'Anda tidak memiliki hak akses.');
         }
 

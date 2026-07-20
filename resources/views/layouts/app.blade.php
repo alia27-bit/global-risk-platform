@@ -811,9 +811,7 @@
 
 <body class="bg-light">
 
-@include('layouts.script')
-
-@stack('scripts')
+@include('layouts.navbar')
 
 <div class="container-fluid p-0">
 
@@ -836,7 +834,18 @@
 {{-- Bootstrap 5 JS --}}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-@include('layouts.script')
+@stack('scripts')
+
+@if(request()->routeIs('dashboard', 'countries.index', 'countries.show', 'weather.show', 'economy.*', 'exchange.*', 'ports.index', 'ports.map', 'ports.show', 'risk.*', 'news.index', 'watchlist.index'))
+<div class="position-fixed bottom-0 end-0 m-3 badge rounded-pill text-bg-success shadow" style="z-index:1080">
+    <i class="bi bi-broadcast me-1"></i> Live &middot; pembaruan 60 detik
+</div>
+<script>
+    window.setInterval(() => {
+        if (!document.hidden && !document.querySelector('form :focus')) window.location.reload();
+    }, 60000);
+</script>
+@endif
 
 </body>
 

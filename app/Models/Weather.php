@@ -16,7 +16,12 @@ class Weather extends Model
         'temperature',
         'wind_speed',
         'weather_code',
+        'rainfall',
+        'storm_risk',
+        'observed_at',
     ];
+
+    protected $casts = ['observed_at' => 'datetime'];
 
     public function country()
     {

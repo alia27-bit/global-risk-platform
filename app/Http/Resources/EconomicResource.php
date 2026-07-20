@@ -11,12 +11,12 @@ class EconomicResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'country_id' => $this->negara_id,
+            'country_id' => $this->country_id,
             'gdp' => $this->gdp ? (float) $this->gdp : null,
-            'inflation' => $this->inflasi ? (float) $this->inflasi : null,
-            'population' => $this->populasi,
-            'exports' => $this->ekspor ? (float) $this->ekspor : null,
-            'imports' => $this->impor ? (float) $this->impor : null,
+            'inflation' => $this->inflation !== null ? (float) $this->inflation : null,
+            'unemployment' => $this->unemployment !== null ? (float) $this->unemployment : null,
+            'exports' => $this->exports !== null ? (float) $this->exports : null,
+            'imports' => $this->imports !== null ? (float) $this->imports : null,
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];
     }

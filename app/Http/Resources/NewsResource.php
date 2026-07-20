@@ -11,15 +11,19 @@ class NewsResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'country_id' => $this->negara_id,
-            'country' => new CountryResource($this->whenLoaded('negara')),
-            'title' => $this->judul,
-            'description' => $this->deskripsi,
-            'image_url' => $this->gambar,
-            'source' => $this->sumber,
+            'country_id' => $this->country_id,
+            'country' => new CountryResource($this->whenLoaded('country')),
+            'title' => $this->title,
+            'content' => $this->content,
+            'source' => $this->source,
             'url' => $this->url,
             'published_at' => $this->published_at?->toIso8601String(),
-            'sentiment' => $this->sentiment,
+            'sentiment' => $this->whenLoaded('sentimentAnalysis', fn () => $this->sentimentAnalysis?->result),
+            'sentiment_scores' => $this->whenLoaded('sentimentAnalysis', fn () => [
+                'positive' => (int) ($this->sentimentAnalysis?->positive ?? 0),
+                'neutral' => (int) ($this->sentimentAnalysis?->neutral ?? 0),
+                'negative' => (int) ($this->sentimentAnalysis?->negative ?? 0),
+            ]),
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }
