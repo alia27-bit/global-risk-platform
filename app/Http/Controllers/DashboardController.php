@@ -64,6 +64,14 @@ class DashboardController extends Controller
                     'category' => $item->country->riskScore->category,
                 ])
                 ->values(),
-        ]);
-    }
-}
+                'riskCategory' => [
+                    'High' => $watchlists->filter(fn($item) =>
+                    optional($item->country->riskScore)->category == 'High')->count(),
+                    'Medium' => $watchlists->filter(fn($item) =>
+                    optional($item->country->riskScore)->category == 'Medium')->count(),
+                    'Low' => $watchlists->filter(fn($item) =>
+                    optional($item->country->riskScore)->category == 'Low')->count(),
+                    ],
+                    ]);
+                    }
+                    }
