@@ -142,6 +142,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('news', NewsController::class)->except(['index', 'show'])->middleware('admin');
     Route::resource('news', NewsController::class)->only(['index', 'show']);
 
+    Route::get('/articles', [ArticleController::class, 'publicIndex'])->name('articles.public.index');
+    Route::get('/articles/{article:slug}', [ArticleController::class, 'publicShow'])->name('articles.public.show');
+
     /*
     |--------------------------------------------------------------------------
     | Ports
@@ -182,22 +185,18 @@ Route::middleware('auth')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Watchlist
+    | Favorite Monitoring (Watchlist)
     |--------------------------------------------------------------------------
     */
 
     Route::middleware('user')->group(function () {
-        Route::get('/watchlist',
-            [WatchlistController::class,'index'])
-            ->name('watchlist.index');
+        Route::get('/favorite-monitoring', [WatchlistController::class, 'index'])->name('favorite-monitoring.index');
+        Route::post('/favorite-monitoring/{country}', [WatchlistController::class, 'store'])->name('favorite-monitoring.store');
+        Route::delete('/favorite-monitoring/{watchlist}', [WatchlistController::class, 'destroy'])->name('favorite-monitoring.destroy');
 
-        Route::post('/watchlist/{country}',
-            [WatchlistController::class,'store'])
-            ->name('watchlist.store');
-
-        Route::delete('/watchlist/{watchlist}',
-            [WatchlistController::class,'destroy'])
-            ->name('watchlist.destroy');
+        Route::get('/watchlist', fn () => redirect()->route('favorite-monitoring.index'))->name('watchlist.index');
+        Route::post('/watchlist/{country}', [WatchlistController::class, 'store'])->name('watchlist.store');
+        Route::delete('/watchlist/{watchlist}', [WatchlistController::class, 'destroy'])->name('watchlist.destroy');
     });
 
     /*

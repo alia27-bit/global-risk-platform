@@ -16,6 +16,7 @@ class PortResource extends JsonResource
             'name' => $this->name,
             'latitude' => (float) $this->latitude,
             'longitude' => (float) $this->longitude,
+            'port_type' => $this->port_type,
         ];
     }
 }

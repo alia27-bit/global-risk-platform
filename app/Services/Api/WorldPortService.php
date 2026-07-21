@@ -20,7 +20,7 @@ class WorldPortService
 
         for ($offset = 0; $offset < 10000; $offset += 2000) {
             $response = Http::acceptJson()->retry(2, 500, throw: false)->timeout(90)->get($url, [
-                'where' => '1=1', 'outFields' => 'PORT_NAME,COUNTRY,LATITUDE,LONGITUDE',
+                'where' => '1=1', 'outFields' => 'PORT_NAME,COUNTRY,LATITUDE,LONGITUDE,HARBORSIZE',
                 'outSR' => 4326, 'resultOffset' => $offset, 'resultRecordCount' => 2000,
                 'orderByFields' => 'OBJECTID', 'f' => 'json',
             ]);
@@ -36,6 +36,7 @@ class WorldPortService
                 Port::updateOrCreate(['country_id' => $country->id, 'name' => $name], [
                     'latitude' => $attributes['LATITUDE'] ?? data_get($feature, 'geometry.y'),
                     'longitude' => $attributes['LONGITUDE'] ?? data_get($feature, 'geometry.x'),
+                    'port_type' => trim((string) ($attributes['HARBORSIZE'] ?? '')) ?: null,
                 ]);
                 $saved++;
             }

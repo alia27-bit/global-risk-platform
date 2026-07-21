@@ -82,15 +82,23 @@ class PortController extends Controller
         $ports = Port::with('country')->get();
         $portMarkers = $ports->map(function (Port $port) {
             return [
+                'id' => $port->id,
                 'name' => $port->name,
                 'country' => $port->country?->name,
+                'country_id' => $port->country_id,
+                'port_type' => $port->port_type,
                 'lat' => (float) $port->latitude,
                 'lng' => (float) $port->longitude,
                 'url' => route('ports.show', $port),
             ];
         });
 
-        return view('ports.map', compact('ports', 'portMarkers'));
+        $countries = Country::query()
+            ->whereIn('id', $ports->pluck('country_id')->unique())
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        return view('ports.map', compact('ports', 'portMarkers', 'countries'));
     }
 
     public function search(Request $request)
@@ -100,8 +108,10 @@ class PortController extends Controller
             $query->where('name', 'like', '%'.$keyword.'%')
                 ->orWhereHas('country', fn ($country) => $country->where('name', 'like', '%'.$keyword.'%'));
         })->orderBy('name')->limit(50)->get()->map(fn (Port $port) => [
+            'id' => $port->id,
             'name' => $port->name,
-            'country' => $port->country ? ['name' => $port->country->name] : null,
+            'country' => $port->country ? ['id' => $port->country->id, 'name' => $port->country->name] : null,
+            'port_type' => $port->port_type,
             'latitude' => $port->latitude,
             'longitude' => $port->longitude,
             'url' => route('ports.show', $port),
@@ -117,6 +127,7 @@ class PortController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
+            'port_type' => ['nullable', 'string', 'max:100'],
         ]);
     }
 }

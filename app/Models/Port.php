@@ -14,6 +14,7 @@ class Port extends Model
         'name',
         'latitude',
         'longitude',
+        'port_type',
     ];
 
     public function country()

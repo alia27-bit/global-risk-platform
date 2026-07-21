@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\SentimentDictionary;
+use App\Models\PositiveWord;
+use App\Models\NegativeWord;
 use App\Models\Country;
 use App\Models\Port;
 
@@ -27,12 +29,33 @@ class DatabaseSeeder extends Seeder
             'peran'    => 'user',
         ]);
 
+        // Seed sentiment_dictionaries (legacy)
         foreach (['growth', 'increase', 'profit', 'stable', 'improve', 'recovery', 'strong', 'gain'] as $word) {
             SentimentDictionary::updateOrCreate(['word' => $word], ['type' => 'positive']);
         }
 
         foreach (['war', 'crisis', 'inflation', 'delay', 'disaster', 'decrease', 'conflict', 'shortage', 'disruption'] as $word) {
             SentimentDictionary::updateOrCreate(['word' => $word], ['type' => 'negative']);
+        }
+
+        // Seed positive_words (digunakan oleh SentimentService)
+        foreach ([
+            'growth', 'grow', 'increase', 'profit', 'stable', 'improve',
+            'recovery', 'strong', 'gain', 'surge', 'benefit', 'optimistic',
+            'resilient', 'boost', 'thrive', 'prosper', 'advance', 'expand',
+            'efficient', 'reliable', 'secure', 'innovative', 'sustainable',
+        ] as $word) {
+            PositiveWord::updateOrCreate(['word' => $word]);
+        }
+
+        // Seed negative_words (digunakan oleh SentimentService)
+        foreach ([
+            'war', 'crisis', 'inflation', 'delay', 'disaster', 'decrease',
+            'conflict', 'shortage', 'disruption', 'decline', 'loss', 'weak',
+            'risk', 'storm', 'recession', 'collapse', 'threat', 'sanction',
+            'embargo', 'unstable', 'volatile', 'corruption', 'bankrupt',
+        ] as $word) {
+            NegativeWord::updateOrCreate(['word' => $word]);
         }
 
         foreach ([
@@ -48,3 +71,4 @@ class DatabaseSeeder extends Seeder
         }
     }
 }
+

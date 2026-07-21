@@ -13,7 +13,7 @@
         </li>
 
         @if(auth()->user()->peran === 'user')
-            <li class="nav-item"><a href="{{ route('watchlist.index') }}" class="nav-link {{ request()->routeIs('watchlist.*') ? 'active' : '' }}"><i class="bi bi-binoculars"></i>{{ __('messages.watchlist') }}</a></li>
+            <li class="nav-item"><a href="{{ route('favorite-monitoring.index') }}" class="nav-link {{ request()->routeIs('favorite-monitoring.*') || request()->routeIs('watchlist.*') ? 'active' : '' }}"><i class="bi bi-star-fill"></i>{{ __('messages.favorite_monitoring') }}</a></li>
         @endif
 
         <li class="nav-item"><a href="{{ route('countries.index') }}" class="nav-link {{ request()->routeIs('countries.*') ? 'active' : '' }}"><i class="bi bi-globe2"></i>{{ __('messages.country') }}</a></li>
@@ -23,6 +23,7 @@
         <li class="nav-item"><a href="{{ route('ports.map') }}" class="nav-link {{ request()->routeIs('ports.map') ? 'active' : '' }}"><i class="bi bi-map"></i>{{ __('messages.port_map') }}</a></li>
         <li class="nav-item"><a href="{{ route('ports.index') }}" class="nav-link {{ request()->routeIs('ports.*') && ! request()->routeIs('ports.map') ? 'active' : '' }}"><i class="bi bi-geo-alt-fill"></i>{{ __('messages.port') }}</a></li>
         <li class="nav-item"><a href="{{ route('news.index') }}" class="nav-link {{ request()->routeIs('news.*') ? 'active' : '' }}"><i class="bi bi-newspaper"></i>{{ __('messages.news') }}</a></li>
+        <li class="nav-item"><a href="{{ route('articles.public.index') }}" class="nav-link {{ request()->routeIs('articles.public.*') ? 'active' : '' }}"><i class="bi bi-journal-text"></i>{{ __('messages.analysis_articles') }}</a></li>
 
         <li class="nav-item mt-3"><span class="nav-section-title">{{ __('messages.analysis') }}</span></li>
         <li class="nav-item"><a href="{{ route('risk.index') }}" class="nav-link {{ request()->routeIs('risk.*') ? 'active' : '' }}"><i class="bi bi-shield-exclamation"></i>{{ __('messages.risk_score') }}</a></li>

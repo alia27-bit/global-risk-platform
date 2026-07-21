@@ -52,6 +52,7 @@ return [
     'profile' => 'Profil',
     'monitoring' => 'Monitoring',
     'watchlist' => 'Daftar Pantauan',
+    'favorite_monitoring' => 'Favorite Monitoring',
     'view_countries' => 'Lihat Negara',
     'information' => 'Informasi',
     'manage_countries_desc' => 'Kelola dan sinkronkan data negara global',

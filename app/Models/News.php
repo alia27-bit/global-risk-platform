@@ -9,6 +9,8 @@ class News extends Model
 {
     use HasFactory;
 
+    protected $table = 'news_cache';
+
     protected $fillable = [
         'country_id',
         'title',
