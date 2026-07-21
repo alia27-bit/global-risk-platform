@@ -10,6 +10,7 @@ use App\Models\RiskScore;
 use App\Models\User;
 use App\Models\Watchlist;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -19,14 +20,32 @@ class DashboardController extends Controller
             $latestRiskIds = RiskScore::query()->selectRaw('MAX(id)')->groupBy('country_id');
             return view('dashboard.admin', [
                 'countries' => Country::count(),
-                'ports' => Port::count(),
-                'newsCount' => News::count(),
+                'ports' => Port::count(),'newsCount' => News::count(),
                 'users' => User::count(),
-                'riskSummary' => RiskScore::whereIn('id', $latestRiskIds)->selectRaw('category, count(*) as total')->groupBy('category')->pluck('total', 'category'),
-                'topRisks' => RiskScore::whereIn('id', $latestRiskIds)->with('country')->orderByDesc('total_score')->limit(8)->get(),
-                'apiLogs' => ApiLog::latest()->limit(8)->get(),
-            ]);
-        }
+                'riskSummary' => RiskScore::whereIn('id', $latestRiskIds)
+                ->selectRaw('category, COUNT(*) total')
+                ->groupBy('category')
+                ->pluck('total','category'),
+                'topRisks' => RiskScore::whereIn('id',$latestRiskIds)
+                ->with('country')
+                ->orderByDesc('total_score')
+                ->limit(10)
+                ->get(),
+
+    'apiLogs' => ApiLog::latest()->limit(10)->get(),
+
+    'riskChart' => RiskScore::whereIn('id',$latestRiskIds)
+        ->with('country')
+        ->orderByDesc('total_score')
+        ->limit(10)
+        ->get(),
+
+    'gdpChart' => Country::with('economicIndicator')
+        ->limit(10)
+        ->get(),
+
+]);
+   }
 
         $watchlists = Watchlist::with('country.riskScore')
             ->where('user_id', $request->user()->id)
