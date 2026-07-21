@@ -2,3 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 @import 'bootstrap-icons/font/bootstrap-icons.css';
+.stat-card{
+
+transition:.3s;
+
+}
+
+.stat-card:hover{
+
+transform:translateY(-6px);
+
+box-shadow:0 10px 25px rgba(0,0,0,.15);
+
+}

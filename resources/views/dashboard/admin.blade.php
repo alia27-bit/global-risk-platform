@@ -19,6 +19,30 @@
             </div>
 
             <div class="card-body">
+                <div class="row mt-3">
+
+    <div class="col-md-4">
+        <div class="alert alert-danger">
+            <strong>High Risk</strong><br>
+            {{ $riskSummary['High'] ?? 0 }} Negara
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="alert alert-warning">
+            <strong>Medium Risk</strong><br>
+            {{ $riskSummary['Medium'] ?? 0 }} Negara
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="alert alert-success">
+            <strong>Low Risk</strong><br>
+            {{ $riskSummary['Low'] ?? 0 }} Negara
+        </div>
+    </div>
+
+</div>
 
                 <canvas id="riskPieChart" height="250"></canvas>
 
@@ -112,6 +136,32 @@
             <td colspan="5" class="text-center py-4 text-muted">Belum ada risk score.</td>
         </tr>
         @endforelse
+        <div class="col-sm-6 col-xl-4">
+    <div class="stat-card h-100 border-start border-danger border-4">
+        <div class="stat-label">High Risk</div>
+        <div class="stat-value text-danger">
+            {{ $riskSummary['High'] ?? 0 }}
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-6 col-xl-4">
+    <div class="stat-card h-100 border-start border-warning border-4">
+        <div class="stat-label">Medium Risk</div>
+        <div class="stat-value text-warning">
+            {{ $riskSummary['Medium'] ?? 0 }}
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-6 col-xl-4">
+    <div class="stat-card h-100 border-start border-success border-4">
+        <div class="stat-label">Low Risk</div>
+        <div class="stat-value text-success">
+            {{ $riskSummary['Low'] ?? 0 }}
+        </div>
+    </div>
+</div>
     </tbody>
 </table>
 </div>
@@ -180,8 +230,30 @@
                     @forelse($apiLogs as $log)
                     <tr>
                         <td class="ps-4 fw-semibold">{{ $log->api_name }}</td>
-<td><span class="badge text-bg-{{ $log->status_code < 300 ? 'success' : 'danger' }}">{{ $log->status_code }}</span></td><td>{{ str($log->message)->limit(80) }}</td>
-<td>{{ $log->created_at->diffForHumans() }}</td></tr>@empty<tr><td colspan="4" class="text-center py-4 text-muted">Belum ada aktivitas API.</td></tr>@endforelse</tbody></table></div></div></div>
+<td>
+
+<div class="progress mb-2" style="height:8px">
+
+<div
+class="progress-bar
+bg-{{ $risk->category=='High' ? 'danger' : ($risk->category=='Medium' ? 'warning':'success') }}"
+style="width:{{ min($risk->total_score,100) }}%">
+</div>
+
+</div>
+
+<span class="badge text-bg-{{ $risk->category=='High' ? 'danger' : ($risk->category=='Medium' ? 'warning':'success') }}">
+
+{{ number_format($risk->total_score,2) }}
+
+{{ $risk->category }}
+
+</span>
+
+</td>
+<td>{{ str($log->message)->limit(80) }}</td>
+<td>{{ $log->created_at->diffForHumans() }}</td></tr>@empty<tr>
+<td colspan="4" class="text-center py-4 text-muted">Belum ada aktivitas API.</td></tr>@endforelse</tbody></table></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
@@ -287,4 +359,19 @@ responsive:true
 });
 
 </script>
+<hr>
+
+<div class="text-center text-muted py-3">
+
+Global Supply Chain Risk Intelligence Platform
+
+<br>
+
+Version 1.0
+
+<br>
+
+© {{ date('Y') }}
+
+</div>
 @endsection
