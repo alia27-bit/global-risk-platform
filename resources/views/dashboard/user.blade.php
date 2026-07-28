@@ -13,13 +13,12 @@
     </div>
 
     <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="stat-card">
+<div class="col-12 col-md-4">            <div class="stat-card">
                 <div class="stat-label">Negara Favorit</div>
                 <div class="stat-value">{{ $watchlistCount }}</div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-12 col-md-4">
             <div class="stat-card">
                 <div class="stat-label">Total Negara</div>
                 <div class="stat-value">{{ $countries }}</div>

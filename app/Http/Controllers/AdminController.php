@@ -7,6 +7,7 @@ use App\Models\News;
 use App\Models\Port;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Services\MonitoringSyncService;
 
 class AdminController extends Controller
 {
@@ -14,7 +15,7 @@ class AdminController extends Controller
     {
         return redirect()->route('dashboard');
     }
-
+    
     public function users()
     {
         return view('admin.users.index', ['users' => User::latest()->paginate(20)]);
@@ -34,4 +35,15 @@ class AdminController extends Controller
         $user->delete();
         return back()->with('success', 'Pengguna berhasil dihapus.');
     }
+    public function syncAll(MonitoringSyncService $sync)
+{
+    $sync->countries();
+
+    $sync->syncAll();
+
+    return back()->with(
+        'success',
+        'Semua data berhasil disinkronkan.'
+    );
+}
 }

@@ -42,13 +42,9 @@ class MonitoringSyncService
     }
 
     public function monitoredCountries(): Collection
-    {
-        $countries = Country::whereHas('watchlists')->orderBy('name')->limit(25)->get();
-
-        return $countries->isNotEmpty()
-            ? $countries
-            : Country::where('code', 'IDN')->get();
-    }
+{
+    return Country::orderBy('name')->get();
+}
 
     public function weather(Country $country): bool
     {
@@ -156,6 +152,27 @@ class MonitoringSyncService
         ]);
         return true;
     }
+
+    public function syncAll(): void
+{
+    $countries = Country::orderBy('name')->get();
+
+    foreach ($countries as $country) {
+
+        $this->weather($country);
+
+        $this->economy($country);
+
+        $this->exchange($country);
+
+        $this->risk($country);
+
+    }
+
+    $this->news();
+
+    $this->ports();
+}
 
     private function log(string $api, int $status, string $message): void
     {

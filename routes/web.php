@@ -224,14 +224,16 @@ Route::middleware(['auth','admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-
+        Route::post(
+    '/admin/sync-all',
+    [AdminController::class, 'syncAll']
+)->name('admin.sync.all');
         Route::get('/',
-            [AdminController::class,'dashboard'])
-            ->name('dashboard');
+        [AdminController::class,'dashboard'])->name('dashboard');
 
         Route::get('/users', [AdminController::class, 'users'])->name('users.index');
         Route::patch('/users/{user}/role', [AdminController::class, 'updateRole'])->name('users.role');
         Route::delete('/users/{user}', [AdminController::class, 'destroyUser'])->name('users.destroy');
         Route::resource('articles', ArticleController::class);
-
+        
     });

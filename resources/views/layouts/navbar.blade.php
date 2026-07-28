@@ -4,8 +4,14 @@
 
         <a class="navbar-brand fw-bold" href="{{ route('dashboard') }}">
             <i class="bi bi-globe-americas me-2"></i>
-            {{ config('app.name') }}
-        </a>
+            <span class="d-none d-lg-inline">
+        {{ config('app.name') }}
+    </span>
+
+    <span class="d-inline d-lg-none">
+        GSCRIP
+    </span>
+</a>
 
         <button class="navbar-toggler"
                 type="button"

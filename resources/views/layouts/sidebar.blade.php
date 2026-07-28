@@ -1,4 +1,4 @@
-<div class="col-md-2 sidebar">
+<div class="col-lg-2 sidebar p-0">
     <ul class="nav flex-column">
         <li class="nav-item">
             <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">

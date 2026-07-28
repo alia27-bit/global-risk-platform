@@ -38,8 +38,9 @@
                         </div>
                     </div>
                 </div>
-                <canvas id="riskPieChart" height="250"></canvas>
-            </div>
+<div class="chart-container">
+    <canvas id="riskPieChart"></canvas>
+</div>            </div>
         </div>
     </div>
 
@@ -135,7 +136,20 @@
                 <i class="bi bi-lightning"></i> Akses Cepat Admin
             </div>
             <div class="card-body d-grid gap-2">
-                <a class="quick-action" href="{{ route('countries.index') }}">
+                <form action="{{ route('admin.sync.all') }}" method="POST">
+
+    @csrf
+
+    <button type="submit" class="btn btn-primary w-100 mb-3">
+
+        <i class="bi bi-arrow-repeat"></i>
+
+        Sinkronisasi Semua API
+
+    </button>
+
+</form>
+            <a class="quick-action" href="{{ route('countries.index') }}">
                     <div class="qa-icon stat-icon-navy"><i class="bi bi-globe"></i></div>
                     <div>
                         <div class="qa-label">Kelola Negara &amp; API</div>
@@ -263,8 +277,9 @@ new Chart(document.getElementById('gdpChart'), {
             tension: 0.4
         }]
     },
-    options: { responsive: true }
-});
+options: {
+    responsive: true,
+    maintainAspectRatio: false,});
 
 // --- Inflation Trend ---
 const inflationData = @json($inflationChart);
@@ -280,8 +295,9 @@ new Chart(document.getElementById('inflationChart'), {
             tension: 0.4
         }]
     },
-    options: { responsive: true }
-});
+options: {
+    responsive: true,
+    maintainAspectRatio: false,});
 
 // --- Currency Trend ---
 const currencyData = @json($currencyChart);
@@ -297,7 +313,10 @@ new Chart(document.getElementById('currencyChart'), {
             tension: 0.4
         }]
     },
-    options: { responsive: true }
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+    }
 });
 
 // --- Risk Trend ---

@@ -80,7 +80,7 @@
     <div class="row g-4">
 
         {{-- Top Risk Countries --}}
-        <div class="col-md-8 animate-in animate-slide animate-slide-1">
+        <div class="col-12 col-lg-8">
             <div class="info-card">
                 <div class="card-header-navy">
                     <i class="bi bi-bar-chart-fill"></i>
@@ -103,8 +103,9 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>
                                             @if($risk->country)
-                                                <img src="{{ $risk->country->flag }}" width="24" class="me-2" alt="">
-                                                {{ $risk->country->name }}
+<img src="{{ $risk->country->flag }}"
+     width="24"
+     class="img-fluid">                                                {{ $risk->country->name }}
                                             @else
                                                 -
                                             @endif
@@ -137,7 +138,7 @@
         </div>
 
         {{-- Latest News --}}
-        <div class="col-md-4 animate-in animate-slide animate-slide-2">
+        <div class="col-12 col-lg-4">
             <div class="info-card">
                 <div class="card-header-navy">
                     <i class="bi bi-newspaper"></i>
@@ -242,7 +243,7 @@
                 <i class="bi bi-lightning-charge"></i> Akses Cepat
             </h6>
         </div>
-        <div class="col-md-3">
+        <div class="col-12 col-sm-6 col-xl-3">
             <a href="{{ route('countries.index') }}" class="quick-action">
                 <div class="qa-icon stat-icon-navy">
                     <i class="bi bi-globe"></i>
@@ -253,7 +254,7 @@
                 </div>
             </a>
         </div>
-        <div class="col-md-3">
+        <div class="col-12 col-sm-6 col-xl-3">
             <a href="{{ route('countries.sync') }}" class="quick-action">
                 <div class="qa-icon stat-icon-accent">
                     <i class="bi bi-arrow-repeat"></i>
@@ -264,7 +265,7 @@
                 </div>
             </a>
         </div>
-        <div class="col-md-3">
+        <div class="col-12 col-sm-6 col-xl-3">
             <a href="{{ route('news.index') }}" class="quick-action">
                 <div class="qa-icon stat-icon-warning">
                     <i class="bi bi-newspaper"></i>
@@ -275,7 +276,7 @@
                 </div>
             </a>
         </div>
-        <div class="col-md-3">
+       <div class="col-12 col-sm-6 col-xl-3">
             <a href="{{ route('ports.index') }}" class="quick-action">
                 <div class="qa-icon stat-icon-info">
                     <i class="bi bi-signpost-split"></i>

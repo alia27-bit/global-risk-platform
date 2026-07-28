@@ -229,16 +229,17 @@
         /* ============================================
            SIDEBAR (Kiri)
            ============================================ */
-        .sidebar {
-            background: linear-gradient(180deg, var(--navy-700) 0%, var(--navy-900) 100%);
-            min-height: calc(100vh - 64px);
-            padding: 1rem 0 2rem;
-            position: sticky;
-            top: 64px;
-            overflow-y: auto;
-            max-height: calc(100vh - 64px);
-        }
+        .sidebar{
+    background: linear-gradient(180deg, var(--navy-700) 0%, var(--navy-900) 100%);
+    min-height: calc(100vh - 64px);
 
+    position: sticky;
+    top:64px;
+
+    overflow-y:auto;
+
+    padding:1rem 0 2rem;
+}
         .sidebar::after {
             content: '';
             position: absolute;
@@ -310,18 +311,7 @@
             opacity: 1;
         }
 
-        /* ============================================
-           MAIN CONTENT
-           ============================================ */
-        .main-content {
-            padding: 2rem 2.25rem;
-            background: var(--gray-100);
-            min-height: calc(100vh - 64px);
-        }
-
-        /* ============================================
-           WELCOME HEADER
-           ============================================ */
+        
         .welcome-section {
             background: linear-gradient(135deg, var(--navy-700) 0%, var(--navy-500) 50%, var(--navy-300) 100%);
             border-radius: var(--radius-lg);
@@ -791,20 +781,54 @@
         /* ============================================
            RESPONSIVE
            ============================================ */
-        @media (max-width: 768px) {
-            .navbar-navy .navbar-brand span {
-                display: none;
-            }
-            .main-content {
-                padding: 1.25rem;
-            }
-            .welcome-section {
-                padding: 1.5rem;
-            }
-            .welcome-section h2 {
-                font-size: 1.25rem;
-            }
-        }
+        @media (max-width: 991px){
+
+    .sidebar{
+        position: relative;
+        min-height: auto;
+        max-height: none;
+        top: 0;
+    }
+
+    .main-content{
+        padding: 15px;
+    }
+
+    .navbar-navy .container-fluid{
+        padding: 0 10px;
+    }
+
+    .navbar-navy .user-details{
+        display:none;
+    }
+
+    .navbar-navy .divider-v{
+        display:none;
+    }
+
+    .welcome-section{
+        padding:20px;
+    }
+
+    .welcome-section h2{
+        font-size:22px;
+    }
+
+    .stat-card{
+        margin-bottom:15px;
+    }
+
+    .table-responsive{
+        overflow-x:auto;
+    }
+    .main-content{
+    padding:2rem;
+    background:#f4f7fb;
+    min-height:calc(100vh - 64px);
+}
+
+}
+
     </style>
 @stack('styles')
 </head>
@@ -819,10 +843,8 @@
 
         @include('layouts.sidebar')
 
-        <main class="col-md-10 main-content">
-
+        <main class="col-lg-10 col-12 main-content">
             @yield('content')
-
         </main>
 
     </div>
